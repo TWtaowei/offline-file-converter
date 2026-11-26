@@ -1,14 +1,22 @@
 <img src="assets/logo.png" alt="本地文件转换器 Logo" width="112">
 
-# 本地文件转换器 · Windows 离线版
+# 本地文件转换器
 
 在电脑上转换 Word、Excel、PPT、PDF 和常见图片。**断网也能用，文件无需上传。** 无广告，无推广弹窗。
 
 ## 使用方法
 
-完整解压离线包，双击 `本地文件转换.exe`。把一个或多个文件拖进窗口，选择目标格式，点击「开始转换」。结果默认保存在原文件旁边。
+| 电脑 | 选择的离线包 |
+| --- | --- |
+| Windows 10 / 11，64 位 | Windows x64 |
+| 32 位 Windows 10，或 Windows 7 SP1（32 / 64 位） | Windows x86 兼容测试版。在 64 位 Windows 上已验证 32 位转换，Windows 7 和原生 32 位系统待实机验证。 |
+| macOS 11 及以上 | 苹果 M 系列选 Apple Silicon，Intel 处理器选 Intel。两款均为待实机验证的测试版。 |
 
-适用于 64 位 Windows 10 / 11，需 .NET Framework 4.8。转换引擎随包提供，无需安装 Microsoft Office。
+**Windows** 完整解压，双击 `本地文件转换.exe`。把文件拖进窗口，选目标格式并开始转换。两个 Windows 版本均需 .NET Framework 4.8。
+
+**Mac** 解压，使用包内的 LibreOffice.dmg 安装引擎，再双击「安装转换器.command」。把文件拖到生成的「本地文件转换器」图标即可选择目标格式。
+
+各版本都附带本地转换引擎，无需安装 Microsoft Office。结果默认保存在原文件旁边。
 
 从仓库源码运行请参阅[构建说明](BUILD.md)。
 

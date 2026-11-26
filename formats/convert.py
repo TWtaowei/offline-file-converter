@@ -1,6 +1,7 @@
 """Offline conversion routes. Uses only the libraries shipped next to this file."""
 # 本项目自有代码及其修改版仅供非商业使用，禁止转售及企业内部业务使用。见根目录 LICENSE。
 import csv
+from contextlib import closing
 import io
 import itertools
 import os
@@ -15,7 +16,10 @@ import uuid
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "vendor"))
 ROOT = HERE.parent
-OFFICE = ROOT / "LibreOffice" / "program"
+if sys.platform == "darwin":
+    OFFICE_CLI = Path(os.environ.get("LOCAL_CONVERTER_OFFICE", "/Applications/LibreOffice.app")) / "Contents/MacOS/soffice"
+else:
+    OFFICE_CLI = ROOT / "LibreOffice" / "program" / "soffice.com"
 APP = ROOT / "本地文件转换.exe"
 from PIL import Image, ImageOps
 
@@ -69,10 +73,12 @@ def profile_at(tmp):
 
 def office_export(source, fmt, tmp):
     folder = work_folder(tmp)
-    cmd = [str(OFFICE/"soffice.com"), "-env:UserInstallation="+profile_at(tmp).as_uri(),
-           "--headless", "--norestore","--nodefault","--convert-to", fmt+":"+FILTERS[fmt],
+    target = fmt if fmt == "pdf" else fmt+":"+FILTERS[fmt]
+    cmd = [str(OFFICE_CLI), "-env:UserInstallation="+profile_at(tmp).as_uri(),
+           "--headless", "--norestore","--nodefault","--convert-to", target,
            "--outdir", str(folder), str(source)]
-    result = subprocess.run(cmd, capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
+    result = subprocess.run(cmd, capture_output=True, timeout=300,
+                            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     file = folder / (source.stem+"."+fmt)
     if result.returncode or not file.exists() or not file.stat().st_size:
         raise ValueError("本地引擎未能导出文件。请检查文件是否有打开密码或已经损坏。")
@@ -171,7 +177,7 @@ def read_pdf(source):
     import pdfplumber
     import pypdfium2 as pdfium
     parts = []
-    with pdfplumber.open(source) as pdf, pdfium.PdfDocument(source) as rendered:
+    with pdfplumber.open(source) as pdf, closing(pdfium.PdfDocument(source)) as rendered:
         for i, page in enumerate(pdf.pages):
             items = []
             view = rendered[i]
@@ -288,6 +294,8 @@ def make_pdf(source,tmp):
         canonical=tmp/("text-input."+native)
         (write_word if native=="docx" else write_book)(sections(source,tmp),canonical)
         source=canonical
+    if sys.platform == "darwin":
+        return office_export(source, "pdf", tmp)
     proc=subprocess.run([str(APP),"--convert","pdf",str(source),str(out)],capture_output=True,creationflags=subprocess.CREATE_NO_WINDOW)
     files=list(out.glob("*.pdf"))
     if proc.returncode or len(files)!=1: raise ValueError("无法排版本地文档，请检查源文件。")
@@ -298,7 +306,7 @@ def page_images(source,tmp):
         yield picture(source)
         return
     import pypdfium2 as pdfium
-    with pdfium.PdfDocument(make_pdf(source,tmp)) as pdf:
+    with closing(pdfium.PdfDocument(make_pdf(source,tmp))) as pdf:
         if not len(pdf): raise ValueError("源文件没有可导出的页面。")
         for index in range(len(pdf)):
             page=pdf[index]

@@ -96,7 +96,8 @@ namespace LocalFiles {
         }
         static void ExportOther(string input, string format, string produced, string stage) {
             string script = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "formats", "convert.py");
-            string python = Path.Combine(Path.GetDirectoryName(Engine),"python.exe");
+            string legacyPython = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python38", "python.exe");
+            string python = File.Exists(legacyPython) ? legacyPython : Path.Combine(Path.GetDirectoryName(Engine),"python.exe");
             string error = Path.Combine(stage, Guid.NewGuid().ToString("N")+".log");
             string args = "-I -B " + string.Join(" ", new[]{script,input,format,produced,error}.Select(p => "\"" + p + "\""));
             var start = new ProcessStartInfo(python,args) { UseShellExecute=false, CreateNoWindow=true, WorkingDirectory=Path.GetDirectoryName(Engine) };

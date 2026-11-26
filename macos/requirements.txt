@@ -1,0 +1,15 @@
+cffi==1.17.1
+charset-normalizer==3.4.4
+cryptography==45.0.7
+et_xmlfile==2.0.0
+lxml==5.4.0
+openpyxl==3.1.5
+pdfminer.six==20250506
+pdfplumber==0.11.7
+pillow==11.3.0
+pycparser==2.22
+pypdfium2==4.30.0
+python-docx==1.2.0
+python-pptx==1.0.2
+typing_extensions==4.14.1
+xlsxwriter==3.2.5

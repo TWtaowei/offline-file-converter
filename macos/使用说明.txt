@@ -1,0 +1,12 @@
+本地文件转换器 · macOS 测试版
+
+需要 macOS 11 或更新版本。打开苹果菜单的「关于本机」查看芯片。Apple M 系列选 Apple Silicon 包，Intel 处理器选 Intel 包。
+
+1. 解压 ZIP。打开里面的 LibreOffice.dmg，把 LibreOffice.app 拖到「应用程序」。已有其他版本时可把包内版本装在个人主目录的 Applications 文件夹，保留系统目录里的版本。
+2. 双击「安装转换器.command」。它会在本机生成「本地文件转换器.app」，并在 Finder 中显示。安装、运行都无需联网，无需另装 Python、Microsoft Office 或 .NET。
+3. 把一个或多个文件拖到转换器图标，或双击图标选文件。选目标格式后开始转换。结果保存在原文件旁，遇到同名文件自动编号。
+
+Word、Excel、PPT 和 PDF 可以相互转换。跨类型时按内容提取文字与表格，或按页生成图片，复杂排版可能变化。纯扫描页可以保留为图片，未提供 OCR。
+本版本已核对两种芯片各自的引擎、解释器和依赖。Finder 安装、拖放与实际转换仍待对应 Mac 实机验证。
+
+本项目自有代码仅限非商业使用，详见 LICENSE。所附 LibreOffice 保留原版 DMG；Python 依赖的许可随各组件提供。
